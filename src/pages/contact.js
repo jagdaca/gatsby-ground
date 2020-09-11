@@ -9,9 +9,9 @@ function encode(data) {
     return Object.keys(data)
       .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
       .join('&')
-  }
+}
   
-  export default function Contact() {
+export default function Contact() {
     const [state, setState] = React.useState({})
   
     const handleChange = (e) => {
@@ -63,7 +63,7 @@ function encode(data) {
             <label>
               Your email:
               <br />
-              <input type="email" name="email" onChange={handleChange} required />
+              <input pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/" name="email" onChange={handleChange} required />
             </label>
           </p>
           <p>
@@ -80,4 +80,4 @@ function encode(data) {
         <Link to="/">Go to home page</Link> <br />
       </Layout>
     )
-  }
+}
