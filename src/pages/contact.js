@@ -1,5 +1,6 @@
 import React from "react"
 import { navigate } from 'gatsby-link'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { Link } from "gatsby"
 
 import Layout from "../components/layout"
@@ -11,73 +12,71 @@ function encode(data) {
       .join('&')
 }
   
-export default function Contact() {
-    const [state, setState] = React.useState({})
+export default () => (
+	<Layout>
+		<SEO title="Contact" />
+		<h1>Contact</h1>
+			<Formik
+				initialValues={{
+				  name: '',
+				  email: '',
+				  message: '',
+				}}
+				onSubmit={      
+					(values, actions) => {
+						fetch("/", {
+							method: "POST",
+							headers: { "Content-Type": "application/x-www-form-urlencoded" },
+							body: encode({ "form-name": "contact", ...values })
+							})
+							.then(() => navigate('/thanks/'))
+							.catch(() => {
+								alert('Error');
+							})
+							.finally(() => actions.setSubmitting(false))
+					}
+				}
+				validate={values => {
+					const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+					const errors = {};
+					if(!values.name) {
+						errors.name = 'Name Required'
+					}
+					if(!values.email || !emailRegex.test(values.email)) {
+						errors.email = 'Valid Email Required'
+					}
+					if(!values.message) {
+						errors.message = 'Message Required'
+					}      return errors;
+				}}  
+			>
+				{() => (
+					<Form name="contact" data-netlify={true} >
+						<p>
+						  <label htmlFor="name">Your name: </label>
+						  <br />
+						  <Field name="name" />
+						  <ErrorMessage name="name" />
+						</p>  
+						<p>
+						  <label htmlFor="email">Your email: </label>
+						  <br />
+						  <Field name="email" />
+						  <ErrorMessage name="email" />
+						</p>
+						<p>
+						  <label htmlFor="message">Message: </label>
+						  <br />
+						  <Field name="message" component="textarea"/>
+						  <ErrorMessage name="message" />
+						</p>
+						<p>
+						  <button type="submit">Send</button>
+						</p>
+					</Form>
+				)}
+			</Formik>
+		<Link to="/">Go to home page</Link> <br />
+	</Layout>
   
-    const handleChange = (e) => {
-      setState({ ...state, [e.target.name]: e.target.value })
-    }
-  
-    const handleSubmit = (e) => {
-      e.preventDefault()
-      const form = e.target
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({
-          'form-name': form.getAttribute('name'),
-          ...state,
-        }),
-      })
-        .then(() => navigate(form.getAttribute('action')))
-        .catch((error) => alert(error))
-    }
-  
-    return (
-      <Layout>
-        <SEO title="Contact" />
-        <h1>Contact</h1>
-        <form
-          name="contact"
-          method="post"
-          action="/thanks/"
-          data-netlify="true"
-          data-netlify-honeypot="bot-field"
-          onSubmit={handleSubmit}
-        >
-          {/* The `form-name` hidden field is required to support form submissions without JavaScript */}
-          <input type="hidden" name="form-name" value="contact" />
-          <p hidden>
-            <label>
-              Don’t fill this out: <input name="bot-field" onChange={handleChange} />
-            </label>
-          </p>
-          <p>
-            <label>
-              Your name:
-              <br />
-              <input type="text" name="name" onChange={handleChange} required />
-            </label>
-          </p>
-          <p>
-            <label>
-              Your email:
-              <br />
-              <input pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/" name="email" onChange={handleChange} required />
-            </label>
-          </p>
-          <p>
-            <label>
-              Message:
-              <br />
-              <textarea name="message" onChange={handleChange} required />
-            </label>
-          </p>
-          <p>
-            <button type="submit">Send</button>
-          </p>
-        </form>
-        <Link to="/">Go to home page</Link> <br />
-      </Layout>
-    )
-}
+)

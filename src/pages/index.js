@@ -13,10 +13,10 @@ const IndexPage = () => (
     <p>Don't dead, open inside.</p>
 	<p>I'm Jacob, web developer.</p>
     <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
+      <Image filename="gatsby-astronaut.png" alt="the gatsby astronout" />
     </div>
-    <Link to="/contact/">Go to contact page</Link> <br />
-	<Link to="/contact2/">Go to contact page 2</Link>
+    <Link to="/services/">Service</Link> <br />
+	<Link to="/contact/">Contact Me</Link> <br />
   </Layout>
 )
 
